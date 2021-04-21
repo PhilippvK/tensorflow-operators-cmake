@@ -5,9 +5,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.13 FATAL_ERROR)
 PROJECT(tflite_micro_custom)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 
 IF(NOT ${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Linux")
-  #MESSAGE(FATAL_ERROR "The libraries can only be built on linux operating systems!")
+    MESSAGE(FATAL_ERROR "The libraries can only be built on linux operating systems!")
 ENDIF()
 
 IF(CMAKE_CROSSCOMPILING)
@@ -20,9 +21,8 @@ ELSE()
     SET(LIBRARY_TYPE "SHARED")
 ENDIF()
 
-SET(TF_DIR "/Users/Philipp/src/ml_on_mcu/deps/src/tf/tensorflow/")
 IF(NOT TF_DIR)
-    MESSAGE(FATAL "Please define TF_DIR before configuring CMake!")
+    MESSAGE(FATAL_ERROR "Please define TF_DIR before configuring CMake!")
 ENDIF()
 
 SET(TF_INCS
