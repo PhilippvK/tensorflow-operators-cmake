@@ -14,10 +14,15 @@ ENDIF()
 IF(CMAKE_CROSSCOMPILING)
     MESSAGE(STATUS "Cross-compiling static library for ${CMAKE_SYSTEM_PROCESSOR}")
     MESSAGE(STATUS "For building the shared libray reconfigure CMake without `-DCMAKE_TOOLCHAIN_FILE`")
+    SET(ADDITIONAL_SOURCES
+        )
     SET(LIBRARY_TYPE "STATIC")
 ELSE()
     MESSAGE(STATUS "Builing shared library for ${CMAKE_SYSTEM_NAME}")
     MESSAGE(STATUS "For cross-compiling  the static libray reconfigure CMake using `-DCMAKE_TOOLCHAIN_FILE=...`")
+    SET(ADDITIONAL_SOURCES
+        ${PROJECT_SOURCE_DIR}/src/registration.cpp
+        )
     SET(LIBRARY_TYPE "SHARED")
 ENDIF()
 
@@ -38,8 +43,8 @@ SET(PROJECT_HEADERS
     )
 
 SET(PROJECT_SRCS
-    ${PROJECT_SOURCE_DIR}/src/registration.cpp
     ${PROJECT_SOURCE_DIR}/src/custom_implementations.cpp
+    ${ADDITIONAL_SOURCES}
     )
 
 ADD_LIBRARY(${PROJECT_NAME} ${LIBRARY_TYPE}
