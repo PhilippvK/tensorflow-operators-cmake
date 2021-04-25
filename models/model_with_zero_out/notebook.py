@@ -38,9 +38,9 @@ tf.saved_model.save(
     #signatures={'my_signature':module.add.get_concrete_function()})
 
 # RUN TESTS FOR CUSTOM OPERATOR
-from tensorflow_zero_out.python.ops.zero_out_ops_test import ZeroOutTest as test
+from tensorflow_zero_out.python.ops.zero_out_ops_test import ZeroOutTest
 
-test.testZeroOut()
+ZeroOutTest().testZeroOut()
 
 
 # CONVERT TEST MODEL
