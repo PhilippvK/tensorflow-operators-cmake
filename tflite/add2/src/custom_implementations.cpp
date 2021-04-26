@@ -22,6 +22,17 @@ constexpr int kInputTensor1 = 0;
 constexpr int kInputTensor2 = 1;
 constexpr int kOutputTensor = 0;
 
+typedef struct {
+  TfLiteFusedActivation activation;
+  // Parameter added for the version 4.
+  bool pot_scale_int16;
+} TfLiteAdd2Params;
+
+TfLiteAdd2Params add2_params = {
+  .activation = kTfLiteActRelu,
+  .pot_scale_int16 = false
+};
+
 struct OpData {
   bool requires_broadcast;
 
@@ -47,7 +58,7 @@ struct OpData {
   float output_activation_max_f32;
 };
 
-TfLiteStatus CalculateOpData(TfLiteContext *context, TfLiteAddParams *params,
+TfLiteStatus CalculateOpData(TfLiteContext *context, TfLiteAdd2Params *params,
                              const TfLiteTensor *input1,
                              const TfLiteTensor *input2, TfLiteTensor *output,
                              OpData *data) {
@@ -91,7 +102,7 @@ TfLiteStatus CalculateOpData(TfLiteContext *context, TfLiteAddParams *params,
   return kTfLiteOk;
 }
 
-void EvalAdd(TfLiteContext *context, TfLiteNode *node, TfLiteAddParams *params,
+void EvalAdd(TfLiteContext *context, TfLiteNode *node, TfLiteAdd2Params *params,
              const OpData *data, const TfLiteEvalTensor *input1,
              const TfLiteEvalTensor *input2, TfLiteEvalTensor *output) {
   tflite::ArithmeticParams op_params;
@@ -116,7 +127,7 @@ void EvalAdd(TfLiteContext *context, TfLiteNode *node, TfLiteAddParams *params,
 }
 
 TfLiteStatus EvalAddQuantized(TfLiteContext *context, TfLiteNode *node,
-                              TfLiteAddParams *params, const OpData *data,
+                              TfLiteAdd2Params *params, const OpData *data,
                               const TfLiteEvalTensor *input1,
                               const TfLiteEvalTensor *input2,
                               TfLiteEvalTensor *output) {
@@ -185,7 +196,6 @@ void *Init(TfLiteContext *context, const char *buffer, size_t length) {
 
 TfLiteStatus Prepare(TfLiteContext *context, TfLiteNode *node) {
   TFLITE_DCHECK(node->user_data != nullptr);
-  TFLITE_DCHECK(node->builtin_data != nullptr);
 
   const TfLiteTensor *input1 = GetInput(context, node, kInputTensor1);
   TF_LITE_ENSURE(context, input1 != nullptr);
@@ -195,7 +205,7 @@ TfLiteStatus Prepare(TfLiteContext *context, TfLiteNode *node) {
   TF_LITE_ENSURE(context, output != nullptr);
 
   OpData *data = static_cast<OpData *>(node->user_data);
-  auto *params = reinterpret_cast<TfLiteAddParams *>(node->builtin_data);
+  auto *params = &add2_params;
 
   TF_LITE_ENSURE_STATUS(
       CalculateOpData(context, params, input1, input2, output, data));
@@ -204,7 +214,7 @@ TfLiteStatus Prepare(TfLiteContext *context, TfLiteNode *node) {
 }
 
 TfLiteStatus Eval(TfLiteContext *context, TfLiteNode *node) {
-  auto *params = reinterpret_cast<TfLiteAddParams *>(node->builtin_data);
+  auto *params = &add2_params;
 
   TFLITE_DCHECK(node->user_data != nullptr);
   const OpData *data = static_cast<const OpData *>(node->user_data);
@@ -238,10 +248,6 @@ TfLiteRegistration *Register_Add2() {
           /*free=*/nullptr,
           /*prepare=*/add2::Prepare,
           /*invoke=*/add2::Eval,
-          /*profiling_string=*/nullptr,
-          /*builtin_code=*/0,
-          /*custom_name=*/nullptr,
-          /*version=*/0
   };
   return &res;
 }
