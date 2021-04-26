@@ -1,3 +1,6 @@
 [submodule "tensorflow"]
 	path = tensorflow
 	url = https://github.com/PhilippvK/custom-op.git
+[submodule "models/_flatbuffers"]
+	path = models/_flatbuffers
+	url = https://github.com/google/flatbuffers.git
