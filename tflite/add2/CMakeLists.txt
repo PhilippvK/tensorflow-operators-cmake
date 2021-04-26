@@ -46,6 +46,9 @@ SET(TF_INCS
 # TODO: support different OSes
 SET(TF_LIB ${TFLM_SRC}/tools/make/gen/linux_x86_64/lib/libtensorflow-microlite.a)
 
+# TODO: Find out if required
+SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 SET(PROJECT_HEADERS
     )
 
