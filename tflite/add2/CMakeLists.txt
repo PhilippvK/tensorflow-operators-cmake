@@ -30,14 +30,21 @@ IF(NOT TF_DIR)
     MESSAGE(FATAL_ERROR "Please define TF_DIR before configuring CMake!")
 ENDIF()
 
+SET(TFL_SRC ${TF_DIR}/tensorflow/lite)
+SET(TFLM_SRC ${TFL_SRC}/micro)
+SET(TFLMD_SRC ${TFLM_SRC}/tools/make/downloads)
+
 SET(TF_INCS
     ${TF_DIR}
-    ${TF_DIR}/tensorflow/lite/micro/tools/make/downloads
-    ${TF_DIR}/tensorflow/lite/micro/tools/make/downloads/gemmlowp
-    ${TF_DIR}/tensorflow/lite/micro/tools/make/downloads/flatbuffers/include
-    ${TF_DIR}/tensorflow/lite/micro/tools/make/downloads/ruy
-    ${TF_DIR}/tensorflow/lite/micro/tools/make/downloads/kissfft
+    ${TFLMD_SRC}
+    ${TFLMD_SRC}/gemmlowp
+    ${TFLMD_SRC}/flatbuffers/include
+    ${TFLMD_SRC}/ruy
+    ${TFLMD_SRC}/kissfft
     )
+
+# TODO: support different OSes
+SET(TF_LIB ${TFLM_SRC}/tools/make/gen/linux_x86_64/lib/libtensorflow-microlite.a)
 
 SET(PROJECT_HEADERS
     )
@@ -60,3 +67,4 @@ TARGET_COMPILE_DEFINITIONS(${PROJECT_NAME} PUBLIC
     TF_LITE_USE_GLOBAL_CMATH_FUNCTIONS
     )
 TARGET_COMPILE_FEATURES(${PROJECT_NAME} PUBLIC cxx_std_11)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC ${TF_LIB})
