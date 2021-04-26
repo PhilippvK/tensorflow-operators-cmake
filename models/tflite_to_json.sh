@@ -2,4 +2,4 @@
 
 MODEL=$1
 
-flatc -t _schema/schema_v3.fbs -- $MODEL
+flatc -t _schema/schema_v3a.fbs -- $MODEL
