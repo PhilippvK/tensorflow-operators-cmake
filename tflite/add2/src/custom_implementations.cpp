@@ -232,15 +232,18 @@ TfLiteStatus Eval(TfLiteContext *context, TfLiteNode *node) {
 
 } // namespace add2
 
-TfLiteRegistration Register_Add2() {
-  return {/*init=*/add::Init,
+TfLiteRegistration *Register_Add2() {
+  static TfLiteRegistration res = {
+          /*init=*/add2::Init,
           /*free=*/nullptr,
-          /*prepare=*/add::Prepare,
-          /*invoke=*/add::Eval,
+          /*prepare=*/add2::Prepare,
+          /*invoke=*/add2::Eval,
           /*profiling_string=*/nullptr,
           /*builtin_code=*/0,
           /*custom_name=*/nullptr,
-          /*version=*/0};
+          /*version=*/0
+  };
+  return &res;
 }
 
 } // namespace micro
